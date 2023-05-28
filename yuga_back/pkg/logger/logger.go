@@ -53,19 +53,23 @@ func init() {
 		FullTimestamp: true,
 	}
 
-	err := os.Mkdir("logs",0644)
+	err := os.Mkdir("logs", 0644)
 
 	if err != nil {
-		panic(err)
+		if os.IsExist(err) {
+			fmt.Println("directory already exist")
+		} else {
+			panic(err)
+		}
 	}
 
-	allFile,err := os.OpenFile("logs/all.log",os.O_CREATE|os.O_WRONLY|os.O_APPEND,0640)
+	allFile, err := os.OpenFile("logs/all.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0640)
 	if err != nil {
 		panic(err)
 	}
 	l.SetOutput(io.Discard)
 	l.AddHook(&writeHook{
-		Writer: []io.Writer{allFile,os.Stdout},
+		Writer:    []io.Writer{allFile, os.Stdout},
 		LogLevels: logrus.AllLevels,
 	})
 
