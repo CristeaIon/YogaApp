@@ -20,24 +20,26 @@ func NewRepository(client postgres.Client, log *logger.Logger) storage.AuthRepos
 	return &repository{client: client, log: log}
 }
 
-func (r *repository) Create(ctx context.Context, user model.User) error {
+func (r *repository) Create(ctx context.Context, user model.User) (model.User, error) {
 	query := `INSERT INTO users 
 				(full_name, email, phone, password_hash)
 			  VALUES ($1,$2,$3,$4)
-			  RETURNING id 
-`
-	if err := r.client.QueryRow(ctx, query).Scan(&user); err != nil {
+			  RETURNING id, full_name, email, phone, created_at, updated_at`
+
+	var u model.User
+
+	if err := r.client.QueryRow(ctx, query, user.FullName, user.Email, user.Phone, user.PasswordHash).Scan(&u.ID, &u.FullName, &u.Email, &u.Phone, &u.CreatedAt, &u.UpdatedAt); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			pgErr = err.(*pgconn.PgError)
 			newErr := fmt.Errorf(fmt.Sprintf("SQL Error: %s, Detail: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState()))
 			r.log.Error(newErr)
-			return newErr
+			return model.User{}, newErr
 		}
-		return err
+		return model.User{}, err
 	}
 
-	return nil
+	return u, nil
 }
 func (r *repository) Update(ctx context.Context, user model.User) error {
 	query := `INSERT INTO users 

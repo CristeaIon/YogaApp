@@ -13,7 +13,8 @@ type Config struct {
 		BindIP string `yaml:"bind_ip" env-default:"127.0.0.1"`
 		Port   string `yaml:"port" env-default:"8080"`
 	} `yaml:"listen"`
-	Storage StorageConfig `yaml:"storage"`
+	JWTSecret string        `yaml:"jwt_secret"`
+	Storage   StorageConfig `yaml:"storage"`
 }
 
 type StorageConfig struct {

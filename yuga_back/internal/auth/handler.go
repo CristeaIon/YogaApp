@@ -32,11 +32,12 @@ func (h *handler) CreateUser(ctx *gin.Context) {
 	h.logger.Info("create new user")
 	err := ctx.BindJSON(&newUser)
 	if err != nil {
-		h.logger.Error(err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 	}
 
-	var user model.User
+	var user model.UserResponse
 	user, err = h.service.CreateUser(ctx, &newUser)
+
 	if err != nil {
 		h.logger.Error(err)
 	}
@@ -46,24 +47,36 @@ func (h *handler) CreateUser(ctx *gin.Context) {
 func (h *handler) LoginUser(ctx *gin.Context) {
 	var newUser model.LoginUserDTO
 	h.logger.Info("login user")
-	ctx.BindJSON(&newUser)
+	err := ctx.BindJSON(&newUser)
+	if err != nil {
+		h.logger.Error(err)
+	}
 	ctx.IndentedJSON(http.StatusCreated, newUser)
 }
 func (h *handler) RestorePassword(ctx *gin.Context) {
 	var restoreDTO model.RestorePasswordDTO
 	h.logger.Info("restore password")
-	ctx.BindJSON(&restoreDTO)
+	err := ctx.BindJSON(&restoreDTO)
+	if err != nil {
+		h.logger.Error(err)
+	}
 	ctx.IndentedJSON(http.StatusCreated, restoreDTO)
 }
 func (h *handler) ValidateCode(ctx *gin.Context) {
 	var code model.ValidateCodeDTO
 	h.logger.Info("validate code")
-	ctx.BindJSON(&code)
+	err := ctx.BindJSON(&code)
+	if err != nil {
+		h.logger.Error(err)
+	}
 	ctx.IndentedJSON(http.StatusCreated, code)
 }
 func (h *handler) UpdatePassword(ctx *gin.Context) {
 	var newPassword model.UpdatePasswordDTO
 	h.logger.Info("update password")
-	ctx.BindJSON(&newPassword)
+	err := ctx.BindJSON(&newPassword)
+	if err != nil {
+		h.logger.Error(err)
+	}
 	ctx.IndentedJSON(http.StatusCreated, newPassword)
 }

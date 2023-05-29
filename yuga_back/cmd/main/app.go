@@ -8,6 +8,7 @@ import (
 	"yuga_back/internal/config"
 	"yuga_back/pkg/client/postgres"
 	"yuga_back/pkg/logger"
+	"yuga_back/pkg/token"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,9 +24,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
+	jwtCreator, err := token.NewJWTCreator(cfg.JWTSecret)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	repository := users.NewRepository(psqlClient, log)
-	ser := service.NewService(repository, log)
+	ser := service.NewService(repository, jwtCreator, log)
 
 	userHandler := auth.NewHandler(ser, log)
 	userHandler.Register(router)
