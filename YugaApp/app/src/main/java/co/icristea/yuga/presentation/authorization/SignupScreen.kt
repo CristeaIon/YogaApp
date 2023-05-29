@@ -40,12 +40,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import co.icristea.yuga.R
 
 @Composable
 fun SignupScreen(navController: NavController) {
+
+    val signupViewModel = hiltViewModel<AuthorizationViewModel>()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -81,8 +85,8 @@ fun SignupScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                value = "",
-                onValueChange = {},
+                value = signupViewModel.fullName.value,
+                onValueChange = signupViewModel::onFullNameChanged,
                 placeholder = {
                     Text(text = "Your name here")
                 },
@@ -99,8 +103,8 @@ fun SignupScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                value = "",
-                onValueChange = {},
+                value = signupViewModel.email.value,
+                onValueChange = signupViewModel::onEmailChanged,
                 placeholder = {
                     Text(text = "your email@gmail.com")
                 },
@@ -119,8 +123,8 @@ fun SignupScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                value = "",
-                onValueChange = {},
+                value = signupViewModel.phone.value,
+                onValueChange = signupViewModel::onPhoneChanged,
                 placeholder = {
                     Text(text = "+373 699999")
                 },
@@ -136,9 +140,9 @@ fun SignupScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                value = "",
+                value = signupViewModel.password.value,
                 visualTransformation = PasswordVisualTransformation(),
-                onValueChange = {},
+                onValueChange = signupViewModel::onPasswordChanged,
                 label = {
                     Text(text = "Password")
                 },
@@ -174,18 +178,20 @@ fun SignupScreen(navController: NavController) {
                     onClick = {},
                 )
             }
-                Spacer(modifier = Modifier.height(35.dp))
-            Button(modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp)
-                .padding(horizontal = 16.dp),
+            Spacer(modifier = Modifier.height(35.dp))
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(54.dp)
+                    .padding(horizontal = 16.dp),
                 elevation = ButtonDefaults.elevation(defaultElevation = 4.dp),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.White,
                     contentColor = MaterialTheme.colors.primary
                 ),
                 shape = RoundedCornerShape(45.dp),
-                onClick = { /*TODO*/ }) {
+                onClick = signupViewModel::onSubmit
+            ) {
                 Text(text = "Sign Up", fontSize = 20.sp)
             }
         }
