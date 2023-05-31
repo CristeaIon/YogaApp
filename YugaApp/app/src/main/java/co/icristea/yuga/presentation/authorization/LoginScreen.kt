@@ -45,6 +45,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import co.icristea.yuga.R
@@ -52,6 +53,8 @@ import co.icristea.yuga.core.navigation.Screen
 
 @Composable
 fun LoginScreen(navController: NavController) {
+
+    val loginViewModel = hiltViewModel<LoginViewModel>();
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -92,8 +95,8 @@ fun LoginScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                value = "",
-                onValueChange = {},
+                value = loginViewModel.email.value,
+                onValueChange = loginViewModel::onEmailChanged,
                 placeholder = {
                     Text(text = "your email@gmail.com")
                 },
@@ -110,9 +113,9 @@ fun LoginScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                value = "",
+                value = loginViewModel.password.value,
                 visualTransformation = PasswordVisualTransformation(),
-                onValueChange = {},
+                onValueChange = loginViewModel::onPasswordChanged,
                 label = {
                     Text(text = "Password")
                 },
@@ -128,7 +131,7 @@ fun LoginScreen(navController: NavController) {
                 .padding(horizontal = 16.dp),
                 elevation = ButtonDefaults.elevation(defaultElevation = 4.dp),
                 shape = RoundedCornerShape(45.dp),
-                onClick = { /*TODO*/ }) {
+                onClick = loginViewModel::onSubmit) {
                 Text(text = "Login", fontSize = 20.sp)
             }
             Spacer(modifier = Modifier.height(10.dp))

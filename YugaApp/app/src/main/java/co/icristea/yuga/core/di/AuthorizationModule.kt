@@ -3,6 +3,7 @@ package co.icristea.yuga.core.di
 import co.icristea.yuga.data.authorization.AuthorisationApi
 import co.icristea.yuga.data.authorization.repository.AuthorizationRepository
 import co.icristea.yuga.domain.authorization.repository.IAuthorizationRepository
+import co.icristea.yuga.domain.authorization.use_case.LoginUser
 import co.icristea.yuga.domain.authorization.use_case.SignupUser
 import dagger.Module
 import dagger.Provides
@@ -21,6 +22,11 @@ object AuthorizationModule {
     @Singleton
     fun provideSignupUseCase(repository: AuthorizationRepository): SignupUser {
         return SignupUser(repository)
+    }
+    @Provides
+    @Singleton
+    fun provideLoginUseCase(repository: AuthorizationRepository): LoginUser {
+        return LoginUser(repository)
     }
 
 

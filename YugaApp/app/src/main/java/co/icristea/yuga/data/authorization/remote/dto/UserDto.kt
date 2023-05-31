@@ -9,12 +9,18 @@ data class UserDto(
     val phone: String,
     val token: String,
     val refreshToken: String,
+    val createdAt: String,
+    val updatedAt: String,
 ) {
     fun toUser(): User {
         return User(
             fullName = fullName,
             email = email,
-            phone = phone
+            phone = phone,
+            token = token,
+            refreshToken = refreshToken,
+            createdAt = createdAt,
+            updatedAt = updatedAt
         )
     }
 }

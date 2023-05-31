@@ -17,12 +17,10 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,7 +46,7 @@ import co.icristea.yuga.R
 @Composable
 fun SignupScreen(navController: NavController) {
 
-    val signupViewModel = hiltViewModel<AuthorizationViewModel>()
+    val signupViewModel = hiltViewModel<SignupViewModel>()
 
     Box(
         modifier = Modifier
