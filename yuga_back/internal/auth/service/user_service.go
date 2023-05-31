@@ -107,3 +107,19 @@ func (s Service) LoginUser(ctx *gin.Context, userDTO *model.LoginUserDTO) (model
 	}
 	return resp, nil
 }
+
+func (s Service) DeleteUser(ctx *gin.Context, id string) (model.DeleteUserResponse, error) {
+	user, err := s.repository.Delete(ctx, id)
+	if err != nil {
+		return model.DeleteUserResponse{}, err
+	}
+
+	u := model.DeleteUserResponse{
+		FullName:  user.FullName,
+		Email:     user.Email,
+		Phone:     user.Phone,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
+	return u, nil
+}

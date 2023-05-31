@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"github.com/lib/pq"
 	"net/http"
 	"yuga_back/internal/auth/model"
@@ -21,12 +22,12 @@ func NewHandler(service *service.Service, logger *logger.Logger) handlers.Handle
 }
 
 func (h *handler) Register(router *gin.Engine) {
-	router.POST("auth/signup", h.CreateUser)
-	router.POST("auth/login", h.LoginUser)
-	router.POST("auth/restore", h.RestorePassword)
-	router.POST("auth/validate-code", h.ValidateCode)
-	router.PATCH("auth/update", h.UpdatePassword)
-	router.DELETE("auth/delete/:id", h.DeleteUser)
+	router.POST("user/signup", h.CreateUser)
+	router.POST("user/login", h.LoginUser)
+	router.POST("user/restore", h.RestorePassword)
+	router.POST("user/validate-code", h.ValidateCode)
+	router.PATCH("user/update", h.UpdatePassword)
+	router.DELETE("user/delete/:id", h.DeleteUser)
 }
 
 func (h *handler) CreateUser(ctx *gin.Context) {
@@ -71,12 +72,12 @@ func (h *handler) LoginUser(ctx *gin.Context) {
 				return
 			}
 		}
-		if err.Error() == "no rows in result set" {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
+		if isNotFoundError(err) {
+			ctx.JSON(http.StatusNotFound, errorResponse(errors.New("user not found")))
 			return
 		}
 
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -88,8 +89,16 @@ func (h *handler) RestorePassword(ctx *gin.Context) {
 	err := ctx.BindJSON(&restoreDTO)
 	if err != nil {
 		h.logger.Error(err)
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
 	}
-	ctx.IndentedJSON(http.StatusCreated, restoreDTO)
+	passwordResponse, err := h.service.RestorePassword(ctx, restoreDTO)
+	if err != nil {
+		h.logger.Error(err)
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.IndentedJSON(http.StatusCreated, passwordResponse)
 }
 func (h *handler) ValidateCode(ctx *gin.Context) {
 	var code model.ValidateCodeDTO
@@ -109,16 +118,35 @@ func (h *handler) UpdatePassword(ctx *gin.Context) {
 	}
 	ctx.IndentedJSON(http.StatusCreated, newPassword)
 }
+
 func (h *handler) DeleteUser(ctx *gin.Context) {
-	var newPassword model.UpdatePasswordDTO
-	h.logger.Info("update password")
-	err := ctx.BindJSON(&newPassword)
+	var req model.DeleteUserRequest
+	h.logger.Info("delete users")
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		h.logger.Error(err)
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	user, err := h.service.DeleteUser(ctx, req.ID)
 	if err != nil {
 		h.logger.Error(err)
+		if isNotFoundError(err) {
+			ctx.JSON(http.StatusNotFound, errorResponse(errors.New("user not found")))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
 	}
-	ctx.IndentedJSON(http.StatusCreated, newPassword)
+	ctx.IndentedJSON(http.StatusOK, user)
 }
 
 func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}
+}
+
+func isNotFoundError(err error) bool {
+	if err.Error() == "no rows in result set" {
+		return true
+	}
+	return false
 }

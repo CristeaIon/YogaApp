@@ -75,7 +75,17 @@ WHERE email = $1
 	}
 	return user, nil
 }
-func (r *repository) Delete(ctx context.Context, id string) error {
-
-	return nil
+func (r *repository) Delete(ctx context.Context, id string) (model.User, error) {
+	query :=
+		`
+DELETE FROM users
+WHERE id = $1
+RETURNING id, full_name, email, phone, created_at, updated_at;
+`
+	var user model.User
+	err := r.client.QueryRow(ctx, query, id).Scan(&user.ID, &user.FullName, &user.Email, &user.Phone, &user.CreatedAt, &user.UpdatedAt)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
 }
