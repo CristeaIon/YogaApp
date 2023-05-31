@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"github.com/lib/pq"
 	"net/http"
 	"yuga_back/internal/auth/model"
 	"yuga_back/internal/auth/service"
@@ -24,22 +25,31 @@ func (h *handler) Register(router *gin.Engine) {
 	router.POST("auth/login", h.LoginUser)
 	router.POST("auth/restore", h.RestorePassword)
 	router.POST("auth/validate-code", h.ValidateCode)
-	router.POST("auth/update", h.UpdatePassword)
+	router.PATCH("auth/update", h.UpdatePassword)
+	router.DELETE("auth/delete/:id", h.DeleteUser)
 }
 
 func (h *handler) CreateUser(ctx *gin.Context) {
 	var newUser model.CreateUserDTO
 	h.logger.Info("create new user")
-	err := ctx.BindJSON(&newUser)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+	if err := ctx.ShouldBindJSON(&newUser); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
 	}
 
 	var user model.UserResponse
-	user, err = h.service.CreateUser(ctx, &newUser)
+	user, err := h.service.CreateUser(ctx, &newUser)
 
 	if err != nil {
-		h.logger.Error(err)
+		if pqErr, ok := err.(*pq.Error); ok {
+			switch pqErr.Code.Name() {
+			case "foreign_key_violation", "unique_violation":
+				ctx.JSON(http.StatusForbidden, errorResponse(err))
+				return
+			}
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
 	}
 	ctx.IndentedJSON(http.StatusCreated, user)
 }
@@ -47,11 +57,30 @@ func (h *handler) CreateUser(ctx *gin.Context) {
 func (h *handler) LoginUser(ctx *gin.Context) {
 	var newUser model.LoginUserDTO
 	h.logger.Info("login user")
-	err := ctx.BindJSON(&newUser)
-	if err != nil {
-		h.logger.Error(err)
+
+	if err := ctx.ShouldBindJSON(&newUser); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
 	}
-	ctx.IndentedJSON(http.StatusCreated, newUser)
+	user, err := h.service.LoginUser(ctx, &newUser)
+	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok {
+			switch pqErr.Code.Name() {
+			case "unique_violation", "no_data_found":
+				ctx.JSON(http.StatusForbidden, errorResponse(err))
+				return
+			}
+		}
+		if err.Error() == "no rows in result set" {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	ctx.IndentedJSON(http.StatusOK, user)
 }
 func (h *handler) RestorePassword(ctx *gin.Context) {
 	var restoreDTO model.RestorePasswordDTO
@@ -79,4 +108,17 @@ func (h *handler) UpdatePassword(ctx *gin.Context) {
 		h.logger.Error(err)
 	}
 	ctx.IndentedJSON(http.StatusCreated, newPassword)
+}
+func (h *handler) DeleteUser(ctx *gin.Context) {
+	var newPassword model.UpdatePasswordDTO
+	h.logger.Info("update password")
+	err := ctx.BindJSON(&newPassword)
+	if err != nil {
+		h.logger.Error(err)
+	}
+	ctx.IndentedJSON(http.StatusCreated, newPassword)
+}
+
+func errorResponse(err error) gin.H {
+	return gin.H{"error": err.Error()}
 }

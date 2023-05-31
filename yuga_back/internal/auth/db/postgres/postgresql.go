@@ -42,10 +42,11 @@ func (r *repository) Create(ctx context.Context, user model.User) (model.User, e
 	return u, nil
 }
 func (r *repository) Update(ctx context.Context, user model.User) error {
-	query := `INSERT INTO users 
-				(full_name, email, phone, password_hash)
-			  VALUES ($1,$2,$3,$4)
-			  RETURNING id 
+	query := `
+INSERT INTO users 
+	(full_name, email, phone, password_hash)
+VALUES ($1,$2,$3,$4)
+RETURNING id 
 `
 	if err := r.client.QueryRow(ctx, query).Scan(&user); err != nil {
 		var pgErr *pgconn.PgError
@@ -60,8 +61,18 @@ func (r *repository) Update(ctx context.Context, user model.User) error {
 
 	return nil
 }
-func (r *repository) FindOne(ctx context.Context, id string) (model.User, error) {
+func (r *repository) FindOne(ctx context.Context, email string) (model.User, error) {
+	query := `
+SELECT
+    id, full_name, email, password_hash, phone, created_at, updated_at
+FROM users
+WHERE email = $1
+`
 	var user model.User
+	err := r.client.QueryRow(ctx, query, email).Scan(&user.ID, &user.FullName, &user.Email, &user.PasswordHash, &user.Phone, &user.CreatedAt, &user.UpdatedAt)
+	if err != nil {
+		return user, err
+	}
 	return user, nil
 }
 func (r *repository) Delete(ctx context.Context, id string) error {

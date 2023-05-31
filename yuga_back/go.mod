@@ -9,6 +9,7 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.4.2
 	github.com/jackc/pgconn v1.14.0
 	github.com/jackc/pgx/v4 v4.18.1
+	github.com/lib/pq v1.10.2
 	github.com/pkg/errors v0.8.1
 	github.com/sirupsen/logrus v1.9.2
 	golang.org/x/crypto v0.9.0
