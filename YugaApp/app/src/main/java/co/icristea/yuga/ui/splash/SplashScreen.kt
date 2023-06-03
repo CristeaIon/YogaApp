@@ -1,4 +1,4 @@
-package co.icristea.yuga.presentation.splash
+package co.icristea.yuga.ui.splash
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

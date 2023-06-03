@@ -4,15 +4,16 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import co.icristea.yuga.presentation.authorization.CreateNewPasswordScreen
-import co.icristea.yuga.presentation.authorization.LoginScreen
-import co.icristea.yuga.presentation.authorization.PasswordChangedScreen
-import co.icristea.yuga.presentation.authorization.ResetPasswordScreen
-import co.icristea.yuga.presentation.authorization.SignupScreen
-import co.icristea.yuga.presentation.authorization.VerificationCodeScreen
-import co.icristea.yuga.presentation.authorization.WelcomeScreen
-import co.icristea.yuga.presentation.onboarding.Onboarding
-import co.icristea.yuga.presentation.splash.SplashScreen
+import co.icristea.yuga.ui.authorization.restore.CreateNewPasswordScreen
+import co.icristea.yuga.ui.authorization.login.LoginScreen
+import co.icristea.yuga.ui.composable.PasswordChangedScreen
+import co.icristea.yuga.ui.authorization.restore.ResetPasswordScreen
+import co.icristea.yuga.ui.authorization.signup.SignupScreen
+import co.icristea.yuga.ui.authorization.restore.VerificationCodeScreen
+import co.icristea.yuga.ui.authorization.WelcomeScreen
+import co.icristea.yuga.ui.home.HomeScreen
+import co.icristea.yuga.ui.onboarding.Onboarding
+import co.icristea.yuga.ui.splash.SplashScreen
 
 @Composable
 fun SetupNavGraph(navController: NavHostController) {
@@ -46,6 +47,9 @@ fun SetupNavGraph(navController: NavHostController) {
         }
         composable(route = Screen.PasswordChanged.route) {
             PasswordChangedScreen(navController)
+        }
+        composable(route = Screen.Home.route) {
+            HomeScreen(navController)
         }
     }
 }

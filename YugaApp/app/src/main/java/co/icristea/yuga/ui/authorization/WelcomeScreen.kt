@@ -1,23 +1,26 @@
-package co.icristea.yuga.presentation.authorization
+package co.icristea.yuga.ui.authorization
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,37 +39,40 @@ import androidx.navigation.compose.rememberNavController
 import co.icristea.yuga.R
 import co.icristea.yuga.core.navigation.Screen
 import co.icristea.yuga.ui.theme.Grey
+import co.icristea.yuga.ui.theme.White
 
 @Composable
 fun WelcomeScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(146.dp))
+            Spacer(modifier = Modifier.fillMaxHeight(.15f))
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "",
-                colorFilter = ColorFilter.tint(MaterialTheme.colors.primary)
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
             )
-            Spacer(modifier = Modifier.height(55.dp))
+            Spacer(modifier = Modifier.fillMaxHeight(.15f))
             Text(
                 text = "Welcome to yoga Online class",
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 50.dp)
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.fillMaxWidth(.8f)
             )
-            Spacer(modifier = Modifier.height(36.dp))
+            Spacer(modifier = Modifier.fillMaxHeight(.15f))
             Row(horizontalArrangement = Arrangement.Center) {
                 WelcomeButton(
                     title = "Login",
-                    textColor = Color.White,
-                    backgroundColor = MaterialTheme.colors.primary,
+                    textColor = MaterialTheme.colorScheme.onPrimary,
+                    backgroundColor = MaterialTheme.colorScheme.primary,
+                    borderColor = MaterialTheme.colorScheme.primary,
                     onClick = {
                         navController.navigate(Screen.Login.route)
                     }
@@ -74,8 +80,9 @@ fun WelcomeScreen(navController: NavController) {
                 Spacer(modifier = Modifier.width(12.dp))
                 WelcomeButton(
                     title = "SignUp",
-                    textColor = MaterialTheme.colors.primary,
-                    backgroundColor = Color.White,
+                    textColor = MaterialTheme.colorScheme.primary,
+                    backgroundColor = MaterialTheme.colorScheme.background,
+                    borderColor = White,
                     onClick = {
                         navController.navigate(Screen.Signup.route)
                     }
@@ -83,18 +90,27 @@ fun WelcomeScreen(navController: NavController) {
             }
             Spacer(
                 modifier = Modifier
-                    .height(20.dp)
+                    .fillMaxHeight(.15f)
             )
-            Spacer(modifier = Modifier.height(59.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Divider(modifier = Modifier.width(100.dp))
+                Divider(
+                    modifier = Modifier.width(100.dp),
+                    color = MaterialTheme.colorScheme.tertiary
+                )
                 Spacer(modifier = Modifier.width(15.dp))
-                Text(text = "Or via social media", fontSize = 18.sp, color = Grey)
+                Text(
+                    text = "Or via social media",
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
                 Spacer(modifier = Modifier.width(15.dp))
-                Divider(modifier = Modifier.width(100.dp))
+                Divider(
+                    modifier = Modifier.width(100.dp),
+                    color = MaterialTheme.colorScheme.tertiary
+                )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.fillMaxHeight(.15f))
             Row {
                 WelcomeSocialButton(id = R.drawable.facebook, onClick = {})
                 Spacer(modifier = Modifier.width(12.dp))
@@ -124,6 +140,7 @@ fun WelcomeButton(
     title: String,
     textColor: Color,
     backgroundColor: Color,
+    borderColor: Color,
     onClick: () -> Unit
 ) {
     Button(
@@ -133,9 +150,13 @@ fun WelcomeButton(
             backgroundColor = backgroundColor
         ),
         modifier = Modifier
-            .background(Color.White)
+//            .background(Color.White)
             .height(50.dp)
             .width(136.dp)
+            .border(
+                border = BorderStroke(1.dp, color = borderColor),
+                shape = RoundedCornerShape(30.dp)
+            )
             .shadow(
                 30.dp,
                 RoundedCornerShape(30.dp),

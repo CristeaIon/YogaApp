@@ -1,4 +1,4 @@
-package co.icristea.yuga.presentation.authorization
+package co.icristea.yuga.ui.authorization.restore
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,7 +19,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -49,13 +49,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import co.icristea.yuga.R
 import co.icristea.yuga.ui.theme.Grey
+import co.icristea.yuga.ui.theme.Primary
 
 @Composable
 fun VerificationCodeScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White)
+            .background(color = MaterialTheme.colorScheme.background)
     )
     var otpValue by remember {
         mutableStateOf("")
@@ -65,7 +66,7 @@ fun VerificationCodeScreen(navController: NavController) {
         IconButton(onClick = {
             navController.popBackStack()
         }) {
-            Icon(Icons.Filled.ArrowBack, contentDescription = "", tint = MaterialTheme.colors.primary)
+            Icon(Icons.Filled.ArrowBack, contentDescription = "", tint = Primary)
         }
     }
     Column(
@@ -76,7 +77,7 @@ fun VerificationCodeScreen(navController: NavController) {
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "",
             modifier = Modifier.width(120.dp),
-            colorFilter = ColorFilter.tint(MaterialTheme.colors.primary)
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
         )
         Spacer(modifier = Modifier.height(86.dp))
 
@@ -123,8 +124,8 @@ fun VerificationCodeScreen(navController: NavController) {
                                 )
                                 .background(color = Color.White, shape = RoundedCornerShape(12.dp))
                                 .padding(6.dp),
-                            style = MaterialTheme.typography.h4,
-                            color = MaterialTheme.colors.primary,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Primary,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.width(16.dp))

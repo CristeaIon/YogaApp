@@ -1,4 +1,4 @@
-package co.icristea.yuga.presentation.onboarding
+package co.icristea.yuga.ui.onboarding
 
 import androidx.annotation.DrawableRes
 import co.icristea.yuga.R

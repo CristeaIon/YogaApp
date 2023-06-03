@@ -5,6 +5,12 @@ import co.icristea.yuga.data.authorization.repository.AuthorizationRepository
 import co.icristea.yuga.domain.authorization.repository.IAuthorizationRepository
 import co.icristea.yuga.domain.authorization.use_case.LoginUser
 import co.icristea.yuga.domain.authorization.use_case.SignupUser
+import co.icristea.yuga.domain.authorization.use_case.ValidateEmail
+import co.icristea.yuga.domain.authorization.use_case.ValidateFullName
+import co.icristea.yuga.domain.authorization.use_case.ValidatePassword
+import co.icristea.yuga.domain.authorization.use_case.ValidatePhone
+import co.icristea.yuga.domain.authorization.use_case.ValidateRepeatedPassword
+import co.icristea.yuga.domain.authorization.use_case.ValidateTerms
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,6 +35,36 @@ object AuthorizationModule {
         return LoginUser(repository)
     }
 
+    @Provides
+    @Singleton
+    fun provideValidateEmailUseCase(): ValidateEmail {
+        return ValidateEmail()
+    }
+    @Provides
+    @Singleton
+    fun provideValidateFullNameUseCase(): ValidateFullName {
+        return ValidateFullName()
+    }
+    @Provides
+    @Singleton
+    fun provideValidatePhoneUseCase(): ValidatePhone {
+        return ValidatePhone()
+    }
+    @Provides
+    @Singleton
+    fun provideValidateTermsUseCase(): ValidateTerms {
+        return ValidateTerms()
+    }
+    @Provides
+    @Singleton
+    fun provideValidatePasswordUseCase(): ValidatePassword {
+        return ValidatePassword()
+    }
+    @Provides
+    @Singleton
+    fun provideValidateRepeatedPasswordUseCase(): ValidateRepeatedPassword {
+        return ValidateRepeatedPassword()
+    }
 
     @Provides
     @Singleton

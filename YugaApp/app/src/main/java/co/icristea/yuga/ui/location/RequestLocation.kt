@@ -1,4 +1,4 @@
-package co.icristea.yuga.presentation.location
+package co.icristea.yuga.ui.location
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

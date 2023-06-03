@@ -1,10 +1,12 @@
-package co.icristea.yuga.presentation.authorization
+package co.icristea.yuga.ui.authorization.restore
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +18,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -29,8 +32,8 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,15 +42,16 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import co.icristea.yuga.R
 import co.icristea.yuga.core.navigation.Screen
+import co.icristea.yuga.ui.theme.HintColor
 
 @Composable
-fun CreateNewPasswordScreen(navController: NavController) {
+fun ResetPasswordScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(MaterialTheme.colorScheme.background),
     ) {
-        CreateNewPasswordScreenBackground()
+        ResetPasswordBackground()
         TopAppBar(backgroundColor = Color.Transparent, elevation = 0.dp) {
             IconButton(onClick = {
                 navController.popBackStack()
@@ -59,56 +63,51 @@ fun CreateNewPasswordScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(75.dp))
+            Spacer(modifier = Modifier.fillMaxHeight(.1f))
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "",
                 modifier = Modifier.width(120.dp)
             )
-            Spacer(modifier = Modifier.height(84.dp))
-            Text(text = "Create Password", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.fillMaxHeight(.15f))
+            Text(
+                text = "Reset Password",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.secondary
+            )
             Spacer(modifier = Modifier.height(15.dp))
             Text(
-                text = "Create a new password and please never share it with anyone for safe use.",
+                text = "Please enter your email address. You will get a link to create new password by email",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(horizontal = 27.dp),
+                color = MaterialTheme.colorScheme.tertiary,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(23.dp))
+            Spacer(modifier = Modifier.fillMaxHeight(.05f))
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 value = "",
-                visualTransformation = PasswordVisualTransformation(),
                 onValueChange = {},
+                textStyle = TextStyle(fontSize = 16.sp),
+                placeholder = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.email),
+                            contentDescription = ""
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+
+                        Text(text = "your email@gmail.com", color = HintColor)
+                    }
+                },
                 label = {
-                    Text(text = "New Password")
+                    Text(text = "Email", color = HintColor)
                 },
                 leadingIcon = {
-                    Image(painter = painterResource(id = R.drawable.secure), contentDescription = "")
-                },
-                trailingIcon = {
-                    Image(painter = painterResource(id = R.drawable.eyes), contentDescription = "")
-                },
-                shape = RoundedCornerShape(45.dp),
-            )
-            Spacer(modifier = Modifier.height(23.dp))
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                value = "",
-                visualTransformation = PasswordVisualTransformation(),
-                onValueChange = {},
-                label = {
-                    Text(text = "Confirm Password")
-                },
-                leadingIcon = {
-                    Image(painter = painterResource(id = R.drawable.secure), contentDescription = "")
-                },
-                trailingIcon = {
-                    Image(painter = painterResource(id = R.drawable.eyes), contentDescription = "")
+
                 },
                 shape = RoundedCornerShape(45.dp),
             )
@@ -119,10 +118,14 @@ fun CreateNewPasswordScreen(navController: NavController) {
                 .padding(horizontal = 16.dp),
                 elevation = ButtonDefaults.elevation(defaultElevation = 4.dp),
                 shape = RoundedCornerShape(45.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                ),
                 onClick = {
                     navController.navigate(Screen.VerificationCode.route)
                 }) {
-                Text(text = "Update Password", fontSize = 20.sp)
+                Text(text = "Send New Password", fontSize = 20.sp)
             }
         }
     }
@@ -130,7 +133,7 @@ fun CreateNewPasswordScreen(navController: NavController) {
 
 
 @Composable
-fun CreateNewPasswordScreenBackground() {
+fun ResetPasswordBackground() {
     Image(
         painter = painterResource(id = R.drawable.splash_background),
         contentScale = ContentScale.Crop,
@@ -141,10 +144,10 @@ fun CreateNewPasswordScreenBackground() {
                 val rect = Rect(
                     left = -0.3f * size.width,
                     right = 1.3f * size.width,
-                    top = size.height * 0.25f,
+                    top = size.height * 0.27f,
                     bottom = size.height //* .6f
                 )
-                lineTo(0f, size.height * .35f)
+                lineTo(0f, size.height * .45f)
                 arcTo(rect, -180f, 180.0f, false)
                 lineTo(size.width, 0f)
                 close()
@@ -154,7 +157,7 @@ fun CreateNewPasswordScreenBackground() {
 
 @Composable
 @Preview(showBackground = true)
-fun CreateNewPasswordScreenPreview() {
+fun ResetPasswordScreenPreview() {
     val navController = rememberNavController()
-    CreateNewPasswordScreen(navController)
+    ResetPasswordScreen(navController)
 }

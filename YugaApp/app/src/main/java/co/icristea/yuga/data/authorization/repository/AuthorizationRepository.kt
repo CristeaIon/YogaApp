@@ -13,7 +13,7 @@ import javax.inject.Inject
 class AuthorizationRepository @Inject constructor(private val api: AuthorisationApi) :
     IAuthorizationRepository {
     override fun signupUser(userData: Map<String, String>): Flow<Response<User>> = flow {
-        emit(Response.Loading())
+
         try {
             val userDto = api.signupUser(userData)
 
@@ -26,7 +26,7 @@ class AuthorizationRepository @Inject constructor(private val api: Authorisation
     }
 
     override fun loginUser(userData: Map<String, String>): Flow<Response<User>> = flow {
-        emit(Response.Loading())
+
         try {
             val userDto = api.loginUser(userData)
 
@@ -40,7 +40,7 @@ class AuthorizationRepository @Inject constructor(private val api: Authorisation
 
     override fun restorePassword(email: String): Flow<Response<Unit>> = flow {
         val body = mapOf("email" to email)
-        emit(Response.Loading())
+
         try {
             val userDto = api.restorePassword(body)
 
@@ -54,7 +54,7 @@ class AuthorizationRepository @Inject constructor(private val api: Authorisation
 
     override fun verifyCode(code: String): Flow<Response<Unit>> = flow {
         val body = mapOf("code" to code)
-        emit(Response.Loading())
+
         try {
             val userDto = api.verifyCode(body)
 
@@ -68,7 +68,7 @@ class AuthorizationRepository @Inject constructor(private val api: Authorisation
 
     override fun updatePassword(password: String): Flow<Response<Unit>> = flow {
         val body = mapOf("password" to password)
-        emit(Response.Loading())
+
         try {
             val userDto = api.updatePassword(body)
 

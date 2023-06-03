@@ -1,4 +1,4 @@
-package co.icristea.yuga.presentation.authorization
+package co.icristea.yuga.ui.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

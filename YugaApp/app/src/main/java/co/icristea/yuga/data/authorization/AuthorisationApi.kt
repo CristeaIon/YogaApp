@@ -23,6 +23,6 @@ interface AuthorisationApi {
     suspend fun updatePassword(@Body data: Map<String, String>)
 
     companion object {
-       const val BASE_URL = "http://10.0.2.2:8080/auth/"
+       const val BASE_URL = "http://192.168.1.102:8080/user/"
     }
-}
+}//"http://10.0.2.2:8080/user/" emmulators
