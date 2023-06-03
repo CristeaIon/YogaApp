@@ -24,9 +24,6 @@ func NewHandler(service *service.Service, logger *logger.Logger) handlers.Handle
 func (h *handler) Register(router *gin.Engine) {
 	router.POST("user/signup", h.CreateUser)
 	router.POST("user/login", h.LoginUser)
-	router.POST("user/restore", h.RestorePassword)
-	router.POST("user/validate-code", h.ValidateCode)
-	router.PATCH("user/update", h.UpdatePassword)
 	router.DELETE("user/delete/:id", h.DeleteUser)
 }
 
@@ -83,42 +80,6 @@ func (h *handler) LoginUser(ctx *gin.Context) {
 
 	ctx.IndentedJSON(http.StatusOK, user)
 }
-func (h *handler) RestorePassword(ctx *gin.Context) {
-	var restoreDTO model.RestorePasswordDTO
-	h.logger.Info("restore password")
-	err := ctx.BindJSON(&restoreDTO)
-	if err != nil {
-		h.logger.Error(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return
-	}
-	passwordResponse, err := h.service.RestorePassword(ctx, restoreDTO)
-	if err != nil {
-		h.logger.Error(err)
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-	ctx.IndentedJSON(http.StatusCreated, passwordResponse)
-}
-func (h *handler) ValidateCode(ctx *gin.Context) {
-	var code model.ValidateCodeDTO
-	h.logger.Info("validate code")
-	err := ctx.BindJSON(&code)
-	if err != nil {
-		h.logger.Error(err)
-	}
-	ctx.IndentedJSON(http.StatusCreated, code)
-}
-func (h *handler) UpdatePassword(ctx *gin.Context) {
-	var newPassword model.UpdatePasswordDTO
-	h.logger.Info("update password")
-	err := ctx.BindJSON(&newPassword)
-	if err != nil {
-		h.logger.Error(err)
-	}
-	ctx.IndentedJSON(http.StatusCreated, newPassword)
-}
-
 func (h *handler) DeleteUser(ctx *gin.Context) {
 	var req model.DeleteUserRequest
 	h.logger.Info("delete users")
