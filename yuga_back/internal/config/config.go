@@ -15,6 +15,10 @@ type Config struct {
 	} `yaml:"listen"`
 	JWTSecret string        `yaml:"jwt_secret"`
 	Storage   StorageConfig `yaml:"storage"`
+	SMTPConf  struct {
+		SendGridApiKey string `yaml:"sendgrid_api_key"`
+		TemplateId     string `yaml:"template_id"`
+	} `yaml:"smtp_conf"`
 }
 
 type StorageConfig struct {

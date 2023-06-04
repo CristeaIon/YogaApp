@@ -35,20 +35,36 @@ func (h *handler) RestorePassword(ctx *gin.Context) {
 	}
 	passwordResponse, err := h.service.RestorePassword(ctx, restoreDTO)
 	if err != nil {
+		if isNotFoundError(err) {
+			h.logger.Error(err)
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+		}
 		h.logger.Error(err)
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.IndentedJSON(http.StatusCreated, passwordResponse)
+	ctx.IndentedJSON(http.StatusOK, passwordResponse)
 }
 func (h *handler) ValidateCode(ctx *gin.Context) {
 	var code model.ValidateCodeDTO
 	h.logger.Info("validate code")
-	err := ctx.BindJSON(&code)
+	err := ctx.ShouldBindJSON(&code)
 	if err != nil {
 		h.logger.Error(err)
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
 	}
-	ctx.IndentedJSON(http.StatusCreated, code)
+	validationResponse, err := h.service.ValidateCode(ctx, code)
+	if err != nil {
+		if isNotFoundError(err) {
+			h.logger.Error(err)
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+		}
+		h.logger.Error(err)
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.IndentedJSON(http.StatusOK, validationResponse)
 }
 func (h *handler) UpdatePassword(ctx *gin.Context) {
 	var newPassword model.UpdatePasswordDTO

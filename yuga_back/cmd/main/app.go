@@ -12,6 +12,7 @@ import (
 	restoreService "yuga_back/internal/restore/service"
 	"yuga_back/pkg/client/postgres"
 	"yuga_back/pkg/logger"
+	"yuga_back/pkg/mail_service"
 	"yuga_back/pkg/token"
 
 	"github.com/gin-gonic/gin"
@@ -32,6 +33,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	mailService := mail_service.NewMailService(cfg, log)
 	// auth service
 	repository := users.NewRepository(psqlClient, log)
 	ser := service.NewService(repository, jwtCreator, log)
@@ -40,7 +42,7 @@ func main() {
 
 	//restore service
 	restorePasswordRepository := db.NewRepository(psqlClient, log)
-	rs := restoreService.NewService(restorePasswordRepository, log)
+	rs := restoreService.NewService(restorePasswordRepository, repository, mailService, log)
 	restoreHandler := restore.NewHandler(rs, log)
 	restoreHandler.Register(router)
 
