@@ -4,6 +4,7 @@ import co.icristea.yuga.data.authorization.AuthorisationApi
 import co.icristea.yuga.data.authorization.repository.AuthorizationRepository
 import co.icristea.yuga.domain.authorization.repository.IAuthorizationRepository
 import co.icristea.yuga.domain.authorization.use_case.LoginUser
+import co.icristea.yuga.domain.authorization.use_case.RestoreUserPassword
 import co.icristea.yuga.domain.authorization.use_case.SignupUser
 import co.icristea.yuga.domain.authorization.use_case.ValidateEmail
 import co.icristea.yuga.domain.authorization.use_case.ValidateFullName
@@ -37,6 +38,12 @@ object AuthorizationModule {
 
     @Provides
     @Singleton
+    fun provideRestorePasswordUseCase(repository: IAuthorizationRepository): RestoreUserPassword {
+        return RestoreUserPassword(repository)
+    }
+
+    @Provides
+    @Singleton
     fun provideValidateEmailUseCase(): ValidateEmail {
         return ValidateEmail()
     }
@@ -66,11 +73,13 @@ object AuthorizationModule {
         return ValidateRepeatedPassword()
     }
 
+
     @Provides
     @Singleton
     fun provideAuthRepository(api: AuthorisationApi): IAuthorizationRepository {
         return AuthorizationRepository(api)
     }
+
 
     @Provides
     @Singleton

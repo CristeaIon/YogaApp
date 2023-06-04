@@ -2,6 +2,7 @@ package co.icristea.yuga.data.authorization.repository
 
 import co.icristea.yuga.core.util.Response
 import co.icristea.yuga.data.authorization.AuthorisationApi
+import co.icristea.yuga.data.authorization.remote.dto.RestorePasswordDto
 import co.icristea.yuga.domain.authorization.model.User
 import co.icristea.yuga.domain.authorization.repository.IAuthorizationRepository
 import kotlinx.coroutines.flow.Flow
@@ -38,13 +39,13 @@ class AuthorizationRepository @Inject constructor(private val api: Authorisation
         }
     }
 
-    override fun restorePassword(email: String): Flow<Response<Unit>> = flow {
+    override fun restorePassword(email: String): Flow<Response<RestorePasswordDto>> = flow {
         val body = mapOf("email" to email)
 
         try {
-            val userDto = api.restorePassword(body)
+            val response = api.restorePassword(body)
 
-            emit(Response.Success(Unit))
+            emit(Response.Success(response))
         } catch (e: HttpException) {
             emit(Response.Error(message = "Oops, something went wrong"))
         } catch (e: IOException) {
