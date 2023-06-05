@@ -42,7 +42,7 @@ func main() {
 
 	//restore service
 	restorePasswordRepository := db.NewRepository(psqlClient, log)
-	rs := restoreService.NewService(restorePasswordRepository, repository, mailService, log)
+	rs := restoreService.NewService(restorePasswordRepository, jwtCreator, repository, mailService, log)
 	restoreHandler := restore.NewHandler(rs, log)
 	restoreHandler.Register(router)
 

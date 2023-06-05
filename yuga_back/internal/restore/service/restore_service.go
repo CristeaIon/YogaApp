@@ -4,16 +4,20 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"time"
+	m "yuga_back/internal/auth/model"
 	userStorage "yuga_back/internal/auth/storage"
 	"yuga_back/internal/restore/model"
 	"yuga_back/internal/restore/storage"
 	"yuga_back/pkg/logger"
 	"yuga_back/pkg/mail_service"
+	"yuga_back/pkg/password"
+	"yuga_back/pkg/token"
 	"yuga_back/pkg/util"
 )
 
 type RestoreService struct {
 	repository     storage.RestorePasswordRepository
+	jwtCreator     token.Creator
 	authRepository userStorage.AuthRepository
 	mailService    mail_service.MailService
 	log            *logger.Logger
@@ -21,11 +25,12 @@ type RestoreService struct {
 
 func NewService(
 	repository storage.RestorePasswordRepository,
+	jwtCreator token.Creator,
 	authRepository userStorage.AuthRepository,
 	mailService mail_service.MailService,
 	log *logger.Logger,
 ) *RestoreService {
-	return &RestoreService{repository: repository, authRepository: authRepository, mailService: mailService, log: log}
+	return &RestoreService{repository: repository, jwtCreator: jwtCreator, authRepository: authRepository, mailService: mailService, log: log}
 }
 
 func (s RestoreService) RestorePassword(ctx *gin.Context, dto model.RestorePasswordDTO) (model.RestorePasswordResponse, error) {
@@ -78,4 +83,29 @@ func (s RestoreService) ValidateCode(ctx *gin.Context, code model.ValidateCodeDT
 	return model.ValidateCodeResponse{
 		Status: "SUCCESS",
 	}, nil
+}
+func (s RestoreService) UpdatePassword(ctx *gin.Context, updatePasswordDto model.UpdatePasswordDTO) (m.UserResponse, error) {
+
+	updatedPassword, err := password.HashPassword(updatePasswordDto.Password)
+	if err != nil {
+		return m.UserResponse{}, err
+	}
+
+	user, err := s.repository.UpdatePassword(ctx, updatePasswordDto.Email, updatedPassword)
+	if err != nil {
+		return m.UserResponse{}, err
+	}
+
+	newToken, err := s.jwtCreator.CreateToken(user.FullName, user.Email, time.Second*600)
+	if err != nil {
+		return m.UserResponse{}, err
+	}
+
+	refreshToken, err := s.jwtCreator.CreateToken(user.FullName, user.Email, time.Minute*600)
+	if err != nil {
+		return m.UserResponse{}, err
+	}
+
+	u := m.UserResponse{FullName: user.FullName, Email: user.Email, Phone: user.Phone, Token: newToken, RefreshToken: refreshToken}
+	return u, nil
 }

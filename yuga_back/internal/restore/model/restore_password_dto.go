@@ -14,6 +14,7 @@ type RestorePasswordResponse struct {
 }
 
 type UpdatePasswordDTO struct {
+	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=6"`
 }
 type ValidateCodeDTO struct {

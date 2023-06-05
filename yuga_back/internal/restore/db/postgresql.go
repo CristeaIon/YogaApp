@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jackc/pgconn"
+	m "yuga_back/internal/auth/model"
 	"yuga_back/internal/restore/model"
 	"yuga_back/internal/restore/storage"
 	"yuga_back/pkg/client/postgres"
@@ -56,9 +57,26 @@ WHERE contact=$1 AND id=$2`
 	return resp, nil
 }
 
-func (r repository) UpdatePassword(ctx context.Context, dto model.UpdatePasswordDTO) {
-	//TODO implement me
-	panic("implement me")
+func (r repository) UpdatePassword(ctx context.Context, email string, password string) (m.User, error) {
+	query := `UPDATE users
+SET password_hash = $1
+WHERE email = $2
+RETURNING id, full_name,email,phone,created_at,updated_at`
+
+	var u m.User
+
+	if err := r.client.QueryRow(ctx, query, password, email).Scan(&u.ID, &u.FullName, &u.Email, &u.Phone, &u.CreatedAt, &u.UpdatedAt); err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			pgErr = err.(*pgconn.PgError)
+			newErr := fmt.Errorf(fmt.Sprintf("SQL Error: %s, Detail: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState()))
+			r.log.Error(newErr)
+			return u, newErr
+		}
+		return u, err
+	}
+
+	return u, nil
 }
 
 func NewRepository(client postgres.Client, log *logger.Logger) storage.RestorePasswordRepository {
