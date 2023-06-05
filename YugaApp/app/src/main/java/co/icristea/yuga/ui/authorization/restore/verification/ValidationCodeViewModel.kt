@@ -1,4 +1,4 @@
-package co.icristea.yuga.ui.authorization.restore
+package co.icristea.yuga.ui.authorization.restore.verification
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import co.icristea.yuga.core.util.AuthorisationEvent
 import co.icristea.yuga.core.util.Response
 import co.icristea.yuga.domain.authorization.use_case.RestoreUserPassword
+import co.icristea.yuga.domain.authorization.use_case.ValidateCode
 import co.icristea.yuga.domain.authorization.use_case.ValidateEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -20,47 +21,33 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class RestorePasswordViewModel @Inject constructor(
-    private val restoreUserPassword: RestoreUserPassword,
-    private val validateEmail: ValidateEmail,
+class ValidationCodeViewModel @Inject constructor(
+    private val validateCode: ValidateCode,
 ) : ViewModel() {
 
-    var state by mutableStateOf(RestoreFormState())
+    var state by mutableStateOf(ValidationFormState())
 
     private val validateEventChannel = Channel<AuthorisationEvent>()
     val validationEvents = validateEventChannel.receiveAsFlow()
 
-    fun onEvent(event: RestoreFormEvent) {
+    fun onEvent(event: ValidationFormEvent) {
         when (event) {
 
-            is RestoreFormEvent.EmailChanged -> {
-                state = state.copy(email = event.email)
-            }
-
-            is RestoreFormEvent.Submit -> {
-                val emailResult = validateEmail.execute(state.email)
-
-                val hasError = listOf(
-                    emailResult,
-                ).any { !it.successful }
-
-                if (hasError) {
-                  state = state.copy(
-                        emailError = emailResult.errorMessage,
-                    )
-                    return
-
-                }
+            is ValidationFormEvent.CodeChanged -> {
+                state = state.copy(code = event.code)
                 onSubmit()
             }
         }
     }
 
+
     private fun onSubmit() {
         Log.e("TAG", "onSubmit:clicked ")
         viewModelScope.launch {
-            restoreUserPassword(
-                state.email,
+            validateCode(
+                "",
+                "",
+                state.code,
             ).onEach { result ->
                 Log.e("TAG", "onSubmit: $result")
                 when (result) {

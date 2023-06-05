@@ -1,4 +1,4 @@
-package co.icristea.yuga.ui.authorization.restore
+package co.icristea.yuga.ui.authorization.restore.reset
 
 data class RestoreFormState(
     val email:String="",

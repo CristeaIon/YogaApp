@@ -4,12 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import co.icristea.yuga.ui.authorization.restore.CreateNewPasswordScreen
+import co.icristea.yuga.ui.authorization.restore.update.CreateNewPasswordScreen
 import co.icristea.yuga.ui.authorization.login.LoginScreen
 import co.icristea.yuga.ui.composable.PasswordChangedScreen
-import co.icristea.yuga.ui.authorization.restore.ResetPasswordScreen
+import co.icristea.yuga.ui.authorization.restore.reset.ResetPasswordScreen
 import co.icristea.yuga.ui.authorization.signup.SignupScreen
-import co.icristea.yuga.ui.authorization.restore.VerificationCodeScreen
+import co.icristea.yuga.ui.authorization.restore.verification.VerificationCodeScreen
 import co.icristea.yuga.ui.authorization.WelcomeScreen
 import co.icristea.yuga.ui.home.HomeScreen
 import co.icristea.yuga.ui.onboarding.Onboarding

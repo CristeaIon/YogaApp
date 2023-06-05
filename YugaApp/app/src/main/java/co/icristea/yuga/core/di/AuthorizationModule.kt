@@ -6,6 +6,7 @@ import co.icristea.yuga.domain.authorization.repository.IAuthorizationRepository
 import co.icristea.yuga.domain.authorization.use_case.LoginUser
 import co.icristea.yuga.domain.authorization.use_case.RestoreUserPassword
 import co.icristea.yuga.domain.authorization.use_case.SignupUser
+import co.icristea.yuga.domain.authorization.use_case.ValidateCode
 import co.icristea.yuga.domain.authorization.use_case.ValidateEmail
 import co.icristea.yuga.domain.authorization.use_case.ValidateFullName
 import co.icristea.yuga.domain.authorization.use_case.ValidatePassword
@@ -30,6 +31,7 @@ object AuthorizationModule {
     fun provideSignupUseCase(repository: AuthorizationRepository): SignupUser {
         return SignupUser(repository)
     }
+
     @Provides
     @Singleton
     fun provideLoginUseCase(repository: AuthorizationRepository): LoginUser {
@@ -47,26 +49,37 @@ object AuthorizationModule {
     fun provideValidateEmailUseCase(): ValidateEmail {
         return ValidateEmail()
     }
+
+    @Provides
+    @Singleton
+    fun provideValidateCodeUseCase(repository: IAuthorizationRepository): ValidateCode {
+        return ValidateCode(repository)
+    }
+
     @Provides
     @Singleton
     fun provideValidateFullNameUseCase(): ValidateFullName {
         return ValidateFullName()
     }
+
     @Provides
     @Singleton
     fun provideValidatePhoneUseCase(): ValidatePhone {
         return ValidatePhone()
     }
+
     @Provides
     @Singleton
     fun provideValidateTermsUseCase(): ValidateTerms {
         return ValidateTerms()
     }
+
     @Provides
     @Singleton
     fun provideValidatePasswordUseCase(): ValidatePassword {
         return ValidatePassword()
     }
+
     @Provides
     @Singleton
     fun provideValidateRepeatedPasswordUseCase(): ValidateRepeatedPassword {

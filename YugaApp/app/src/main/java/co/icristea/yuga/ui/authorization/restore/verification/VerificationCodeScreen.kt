@@ -1,4 +1,4 @@
-package co.icristea.yuga.ui.authorization.restore
+package co.icristea.yuga.ui.authorization.restore.verification
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +25,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -45,22 +47,36 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import co.icristea.yuga.R
+import co.icristea.yuga.core.util.AuthorisationEvent
 import co.icristea.yuga.ui.theme.Grey
 import co.icristea.yuga.ui.theme.Primary
+import kotlinx.coroutines.flow.collect
 
 @Composable
 fun VerificationCodeScreen(navController: NavController) {
+
+    val validateCodeViewModel = hiltViewModel<ValidationCodeViewModel>()
+    val state = validateCodeViewModel.state
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = context) {
+        validateCodeViewModel.validationEvents.collect { result ->
+            when (result) {
+                is AuthorisationEvent.Success -> {}
+                is AuthorisationEvent.Error -> {}
+            }
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background)
     )
-    var otpValue by remember {
-        mutableStateOf("")
-    }
+
     VerificationCodeBackground()
     TopAppBar(backgroundColor = Color.Transparent, elevation = 0.dp) {
         IconButton(onClick = {
@@ -99,10 +115,10 @@ fun VerificationCodeScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(26.dp))
         BasicTextField(
-            value = otpValue,
+            value = state.code,
             onValueChange = {
                 if (it.length <= 4) {
-                    otpValue = it
+                    validateCodeViewModel.onEvent(ValidationFormEvent.CodeChanged(it))
                 }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
@@ -110,8 +126,8 @@ fun VerificationCodeScreen(navController: NavController) {
                 Row(horizontalArrangement = Arrangement.Center) {
                     repeat(4) { index ->
                         val char = when {
-                            index >= otpValue.length -> ""
-                            else -> otpValue[index].toString()
+                            index >= state.code.length -> ""
+                            else -> state.code[index].toString()
                         }
                         Text(
                             text = char,
@@ -124,7 +140,7 @@ fun VerificationCodeScreen(navController: NavController) {
                                 )
                                 .background(color = Color.White, shape = RoundedCornerShape(12.dp))
                                 .padding(6.dp),
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.displaySmall,
                             color = Primary,
                             textAlign = TextAlign.Center
                         )

@@ -2,7 +2,10 @@ package co.icristea.yuga.domain.authorization.repository
 
 import co.icristea.yuga.core.util.Response
 import co.icristea.yuga.data.authorization.remote.dto.RestorePasswordDto
+import co.icristea.yuga.data.authorization.remote.dto.UserDto
+import co.icristea.yuga.data.authorization.remote.dto.ValidationDto
 import co.icristea.yuga.domain.authorization.model.User
+import co.icristea.yuga.domain.authorization.use_case.RestoreUserPassword
 import kotlinx.coroutines.flow.Flow
 
 interface IAuthorizationRepository {
@@ -13,8 +16,8 @@ interface IAuthorizationRepository {
 
     fun restorePassword(email: String): Flow<Response<RestorePasswordDto>>
 
-    fun verifyCode(code: String): Flow<Response<Unit>>
+    fun verifyCode(body: Map<String, String>): Flow<Response<ValidationDto>>
 
-    fun updatePassword(password: String): Flow<Response<Unit>>
+    fun updatePassword(body: Map<String, String>): Flow<Response<UserDto>>
 
 }

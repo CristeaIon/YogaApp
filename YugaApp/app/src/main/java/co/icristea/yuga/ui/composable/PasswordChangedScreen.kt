@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import co.icristea.yuga.R
+import co.icristea.yuga.core.navigation.Screen
 
 @Composable
 fun PasswordChangedScreen(navController: NavController) {
@@ -73,7 +74,7 @@ fun PasswordChangedScreen(navController: NavController) {
                     contentColor = MaterialTheme.colors.primary
                 ),
                 shape = RoundedCornerShape(45.dp),
-                onClick = { /*TODO*/ }) {
+                onClick = {navController.popBackStack(Screen.Login.route,false) }) {
                 Text(text = "Back to login", fontSize = 20.sp)
             }
         }

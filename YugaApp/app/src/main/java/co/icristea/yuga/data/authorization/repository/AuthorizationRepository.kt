@@ -3,6 +3,8 @@ package co.icristea.yuga.data.authorization.repository
 import co.icristea.yuga.core.util.Response
 import co.icristea.yuga.data.authorization.AuthorisationApi
 import co.icristea.yuga.data.authorization.remote.dto.RestorePasswordDto
+import co.icristea.yuga.data.authorization.remote.dto.UserDto
+import co.icristea.yuga.data.authorization.remote.dto.ValidationDto
 import co.icristea.yuga.domain.authorization.model.User
 import co.icristea.yuga.domain.authorization.repository.IAuthorizationRepository
 import kotlinx.coroutines.flow.Flow
@@ -53,13 +55,12 @@ class AuthorizationRepository @Inject constructor(private val api: Authorisation
         }
     }
 
-    override fun verifyCode(code: String): Flow<Response<Unit>> = flow {
-        val body = mapOf("code" to code)
+    override fun verifyCode(body: Map<String, String>): Flow<Response<ValidationDto>> = flow {
 
         try {
-            val userDto = api.verifyCode(body)
+            val validationResponse = api.verifyCode(body)
 
-            emit(Response.Success(Unit))
+            emit(Response.Success(validationResponse))
         } catch (e: HttpException) {
             emit(Response.Error(message = "Oops, something went wrong"))
         } catch (e: IOException) {
@@ -67,13 +68,12 @@ class AuthorizationRepository @Inject constructor(private val api: Authorisation
         }
     }
 
-    override fun updatePassword(password: String): Flow<Response<Unit>> = flow {
-        val body = mapOf("password" to password)
+    override fun updatePassword(body: Map<String, String>): Flow<Response<UserDto>> = flow {
 
         try {
-            val userDto = api.updatePassword(body)
+            val updatedUser = api.updatePassword(body)
 
-            emit(Response.Success(Unit))
+            emit(Response.Success(updatedUser))
         } catch (e: HttpException) {
             emit(Response.Error(message = "Oops, something went wrong"))
         } catch (e: IOException) {
