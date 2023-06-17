@@ -11,19 +11,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.GenericShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -49,8 +42,9 @@ import androidx.navigation.compose.rememberNavController
 import co.icristea.yuga.R
 import co.icristea.yuga.core.navigation.Screen
 import co.icristea.yuga.core.util.AuthorisationEvent
+import co.icristea.yuga.ui.composable.AuthorisationButton
+import co.icristea.yuga.ui.composable.AuthorizationTextField
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController) {
 
@@ -113,12 +107,9 @@ fun LoginScreen(navController: NavController) {
                 color = MaterialTheme.colorScheme.secondary
             )
             Spacer(modifier = Modifier.fillMaxHeight(.1f))
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+            AuthorizationTextField(
                 value = state.email,
-                onValueChange = { loginViewModel.onEvent(LoginFormEvent.EmailChanged(it)) },
+                onChange = { loginViewModel.onEvent(LoginFormEvent.EmailChanged(it)) },
                 placeholder = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
@@ -137,30 +128,20 @@ fun LoginScreen(navController: NavController) {
                 label = {
                     Text(text = "Email", color = MaterialTheme.colorScheme.tertiary)
                 },
-                leadingIcon = {
-
-                },
-                shape = RoundedCornerShape(45.dp),
                 isError = !state.emailError.isNullOrEmpty(),
-                supportingText = {
-                    Text(text = state.emailError ?: "", fontSize = 10.sp,color = Color.Red)
+                errorMessage = {
+                    Text(text = state.emailError ?: "", fontSize = 10.sp, color = Color.Red)
                 }
             )
             Spacer(modifier = Modifier.fillMaxHeight(.02f))
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+            AuthorizationTextField(
                 value = state.password,
                 visualTransformation = PasswordVisualTransformation(),
-                onValueChange = {
+                onChange = {
                     loginViewModel.onEvent(LoginFormEvent.PasswordChanged(it))
                 },
                 label = {
                     Text(text = "Password", color = MaterialTheme.colorScheme.tertiary)
-                },
-                leadingIcon = {
-
                 },
                 trailingIcon = {
                     Image(
@@ -172,26 +153,18 @@ fun LoginScreen(navController: NavController) {
                         ),
                     )
                 },
-                shape = RoundedCornerShape(45.dp),
                 isError = !state.passwordError.isNullOrEmpty(),
-                supportingText = {
-                    Text(text = state.passwordError ?: "", fontSize = 10.sp,color = Color.Red)
+                errorMessage = {
+                    Text(text = state.passwordError ?: "", fontSize = 10.sp, color = Color.Red)
                 }
             )
             Spacer(modifier = Modifier.fillMaxHeight(.02f))
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp)
-                    .padding(horizontal = 16.dp),
-                elevation = ButtonDefaults.elevation(defaultElevation = 4.dp),
-                shape = RoundedCornerShape(45.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colorScheme.primary
-                ),
-                onClick = { loginViewModel.onEvent(LoginFormEvent.Submit) }
+            AuthorisationButton(
+                title = "Login",
+                textColor = MaterialTheme.colorScheme.onPrimary,
+                backgroundColor = MaterialTheme.colorScheme.primary
             ) {
-                Text(text = "Login", fontSize = 20.sp, color = MaterialTheme.colorScheme.onPrimary)
+                loginViewModel.onEvent(LoginFormEvent.Submit)
             }
             Spacer(modifier = Modifier.height(10.dp))
             ClickableText(
@@ -227,3 +200,5 @@ fun LoginPagePreview() {
     val navController = rememberNavController()
     LoginScreen(navController)
 }
+
+

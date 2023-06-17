@@ -3,31 +3,20 @@ package co.icristea.yuga.ui.authorization.signup
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.GenericShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.Icon
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -52,12 +41,12 @@ import androidx.navigation.compose.rememberNavController
 import co.icristea.yuga.R
 import co.icristea.yuga.core.navigation.Screen
 import co.icristea.yuga.core.util.AuthorisationEvent
-import co.icristea.yuga.ui.theme.Grey
+import co.icristea.yuga.ui.composable.AuthorisationButton
+import co.icristea.yuga.ui.composable.AuthorizationTextField
 import co.icristea.yuga.ui.theme.HintColor
 import co.icristea.yuga.ui.theme.Primary
 import co.icristea.yuga.ui.theme.White
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignupScreen(navController: NavController) {
 
@@ -85,16 +74,6 @@ fun SignupScreen(navController: NavController) {
             .background(MaterialTheme.colorScheme.background)
     ) {
 
-        val textFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = Color.White,
-            focusedLabelColor = Color.White,
-            focusedBorderColor = Color.White,
-            unfocusedLabelColor = Color.White,
-            unfocusedBorderColor = Color.White,
-            placeholderColor = Color.White,
-            errorBorderColor = Color.Red,
-        )
-
         SignUpBackground()
         Column(
             modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
@@ -110,38 +89,27 @@ fun SignupScreen(navController: NavController) {
             Text(text = "Sign Up", fontSize = 36.sp, color = Color.White)
             Spacer(modifier = Modifier.fillMaxHeight(.05f))
 
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+            AuthorizationTextField(
                 value = state.fullName,
-                onValueChange = {
+                onChange = {
                     signupViewModel.onEvent(SignupFormEvent.FullNameChanged(it))
                 },
                 placeholder = {
-                    Text(text = "Your name here",color = HintColor)
+                    Text(text = "Your name here", color = HintColor)
                 },
                 label = {
-                    Text(text = "Full Name",color = White)
+                    Text(text = "Full Name", color = White)
                 },
                 isError = !state.fullNameError.isNullOrEmpty(),
-                supportingText = {
-                    Text(text = state.fullNameError ?: "", fontSize = 10.sp,color = Color.Red)
+                errorMessage = {
+                    Text(text = state.fullNameError ?: "", fontSize = 10.sp, color = Color.Red)
                 },
-                leadingIcon = {
-
-                },
-                shape = RoundedCornerShape(45.dp),
-                colors = textFieldColors,
             )
 
             Spacer(modifier = Modifier.fillMaxHeight(.01f))
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+            AuthorizationTextField(
                 value = state.email,
-                onValueChange = {
+                onChange = {
                     signupViewModel.onEvent(SignupFormEvent.EmailChanged(it))
                 },
                 placeholder = {
@@ -153,85 +121,65 @@ fun SignupScreen(navController: NavController) {
                         )
                         Spacer(modifier = Modifier.width(5.dp))
 
-                        Text(text = "your email@gmail.com",color = HintColor)
+                        Text(text = "your email@gmail.com", color = HintColor)
                     }
                 },
                 label = {
-                    Text(text = "Email",color = White)
+                    Text(text = "Email", color = White)
                 },
-                leadingIcon = {
-                },
-                colors = textFieldColors,
-                shape = RoundedCornerShape(45.dp),
                 isError = !state.emailError.isNullOrEmpty(),
-                supportingText = {
-                    Text(text = state.emailError ?: "", fontSize = 10.sp,color = Color.Red)
+                errorMessage = {
+                    Text(text = state.emailError ?: "", fontSize = 10.sp, color = Color.Red)
                 }
             )
             Spacer(modifier = Modifier.fillMaxHeight(.01f))
 
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+            AuthorizationTextField(
                 value = state.phone,
-                onValueChange = {
+                onChange = {
                     signupViewModel.onEvent(SignupFormEvent.PhoneChanged(it))
                 },
                 placeholder = {
-                    Text(text = "+373 699999",color = HintColor)
+                    Text(text = "+373 699999", color = HintColor)
                 },
                 label = {
-                    Text(text = "Phone",color = White)
+                    Text(text = "Phone", color = White)
                 },
-                leadingIcon = {
-
-                },
-                colors = textFieldColors,
-                shape = RoundedCornerShape(45.dp),
                 isError = !state.phoneError.isNullOrEmpty(),
-                supportingText = {
-                    Text(text = state.phoneError ?: "", fontSize = 10.sp,color = Color.Red)
+                errorMessage = {
+                    Text(text = state.phoneError ?: "", fontSize = 10.sp, color = Color.Red)
                 }
             )
             Spacer(modifier = Modifier.fillMaxHeight(.01f))
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+            AuthorizationTextField(
                 value = state.password,
                 visualTransformation = PasswordVisualTransformation(),
-                onValueChange = {
+                onChange = {
                     signupViewModel.onEvent(SignupFormEvent.PasswordChanged(it))
                 },
                 label = {
-                    Text(text = "Password",color = White)
-                },
-                leadingIcon = {
-
+                    Text(text = "Password", color = White)
                 },
                 trailingIcon = {
                     Image(painter = painterResource(id = R.drawable.eyes), contentDescription = "")
                 },
-                colors = textFieldColors,
-                shape = RoundedCornerShape(45.dp),
                 isError = !state.passwordError.isNullOrEmpty(),
-                supportingText = {
-                    Text(text = state.passwordError ?: "", fontSize = 10.sp,color = Color.Red)
+                errorMessage = {
+                    Text(text = state.passwordError ?: "", fontSize = 10.sp, color = Color.Red)
                 },
             )
 
             Spacer(modifier = Modifier.fillMaxHeight(.01f))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(checked = state.termsAccepted,
-                    colors= CheckboxDefaults.colors(
+                    colors = CheckboxDefaults.colors(
                         uncheckedColor = Primary,
                         checkedColor = Primary,
                         disabledIndeterminateColor = White
                     ),
                     onCheckedChange = {
-                    signupViewModel.onEvent(SignupFormEvent.TermsChanged(it))
-                })  //TODO made check box design like
+                        signupViewModel.onEvent(SignupFormEvent.TermsChanged(it))
+                    })  //TODO made check box design like
                 Text(text = "Yes! Agree all", fontSize = 18.sp, color = Color.White)
                 Spacer(modifier = Modifier.width(3.dp))
                 ClickableText(text = AnnotatedString("Terms"),
@@ -254,24 +202,14 @@ fun SignupScreen(navController: NavController) {
                     onClick = {},
                 )
             }
-            Text(text = state.termsError ?: "", fontSize = 10.sp,color = Color.Red)
+            Text(text = state.termsError ?: "", fontSize = 10.sp, color = Color.Red)
             Spacer(modifier = Modifier.fillMaxHeight(.02f))
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp)
-                    .padding(horizontal = 16.dp),
-                elevation = ButtonDefaults.elevation(defaultElevation = 4.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.White,
-                    contentColor = Primary
-                ),
-                shape = RoundedCornerShape(45.dp),
-                onClick = {
-                    signupViewModel.onEvent(SignupFormEvent.Submit)
-                }
+            AuthorisationButton(
+                title = "Sign Up",
+                textColor = Primary,
+                backgroundColor = Color.White
             ) {
-                Text(text = "Sign Up", fontSize = 20.sp)
+                signupViewModel.onEvent(SignupFormEvent.Submit)
             }
         }
     }

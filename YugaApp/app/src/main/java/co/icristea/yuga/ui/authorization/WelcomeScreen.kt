@@ -38,7 +38,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import co.icristea.yuga.R
 import co.icristea.yuga.core.navigation.Screen
-import co.icristea.yuga.ui.theme.Grey
 import co.icristea.yuga.ui.theme.White
 
 @Composable
@@ -150,7 +149,6 @@ fun WelcomeButton(
             backgroundColor = backgroundColor
         ),
         modifier = Modifier
-//            .background(Color.White)
             .height(50.dp)
             .width(136.dp)
             .border(
@@ -161,10 +159,6 @@ fun WelcomeButton(
                 30.dp,
                 RoundedCornerShape(30.dp),
                 //TODO:(icristea) fix button shadow
-//                false,
-//                Color.Blue,
-//                Color.Red
-
             ),
         onClick = onClick,
     ) {
@@ -180,10 +174,3 @@ fun WelcomePreview() {
     val navController = rememberNavController()
     WelcomeScreen(navController)
 }
-
-//@Composable
-//@Preview(uiMode = UI_MODE_NIGHT_YES)
-//fun WelcomePreviewBlackTheme() {
-//    val navController = rememberNavController()
-//    WelcomePage(navController)
-//}

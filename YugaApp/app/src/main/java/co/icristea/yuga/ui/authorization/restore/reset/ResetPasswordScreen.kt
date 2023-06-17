@@ -9,23 +9,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.GenericShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -36,7 +30,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,9 +41,10 @@ import androidx.navigation.compose.rememberNavController
 import co.icristea.yuga.R
 import co.icristea.yuga.core.navigation.Screen
 import co.icristea.yuga.core.util.AuthorisationEvent
+import co.icristea.yuga.ui.composable.AuthorisationButton
+import co.icristea.yuga.ui.composable.AuthorizationTextField
 import co.icristea.yuga.ui.theme.HintColor
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResetPasswordScreen(navController: NavController) {
 
@@ -111,15 +105,11 @@ fun ResetPasswordScreen(navController: NavController) {
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.fillMaxHeight(.05f))
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+            AuthorizationTextField(
                 value = state.email,
-                onValueChange = {
+                onChange = {
                     restorePasswordViewModel.onEvent(RestoreFormEvent.EmailChanged(it))
                 },
-                textStyle = TextStyle(fontSize = 16.sp),
                 placeholder = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
@@ -134,30 +124,18 @@ fun ResetPasswordScreen(navController: NavController) {
                 label = {
                     Text(text = "Email", color = HintColor)
                 },
-                leadingIcon = {
-
-                },
-                shape = RoundedCornerShape(45.dp),
                 isError = !state.emailError.isNullOrEmpty(),
-                supportingText = {
-                    Text(text = state.emailError ?: "", fontSize = 10.sp,color = Color.Red)
+                errorMessage = {
+                    Text(text = state.emailError ?: "", fontSize = 10.sp, color = Color.Red)
                 }
             )
             Spacer(modifier = Modifier.height(30.dp))
-            Button(modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp)
-                .padding(horizontal = 16.dp),
-                elevation = ButtonDefaults.elevation(defaultElevation = 4.dp),
-                shape = RoundedCornerShape(45.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                ),
-                onClick = {
-                    restorePasswordViewModel.onEvent(RestoreFormEvent.Submit)
-                }) {
-                Text(text = "Send New Password", fontSize = 20.sp)
+            AuthorisationButton(
+                title = "Send New Password",
+                textColor = MaterialTheme.colorScheme.onPrimary,
+                backgroundColor = MaterialTheme.colorScheme.primary
+            ) {
+                restorePasswordViewModel.onEvent(RestoreFormEvent.Submit)
             }
         }
     }

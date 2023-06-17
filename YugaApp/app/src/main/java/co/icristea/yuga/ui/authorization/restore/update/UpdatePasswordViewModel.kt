@@ -9,10 +9,7 @@ import androidx.lifecycle.viewModelScope
 import co.icristea.yuga.core.di.AuthorizationModule_ProvideValidateRepeatedPasswordUseCaseFactory
 import co.icristea.yuga.core.util.AuthorisationEvent
 import co.icristea.yuga.core.util.Response
-import co.icristea.yuga.domain.authorization.use_case.RestoreUserPassword
 import co.icristea.yuga.domain.authorization.use_case.UpdateUserPassword
-import co.icristea.yuga.domain.authorization.use_case.ValidateEmail
-import co.icristea.yuga.domain.authorization.use_case.ValidatePassword
 import co.icristea.yuga.domain.authorization.use_case.ValidateRepeatedPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -70,6 +67,7 @@ class UpdatePasswordViewModel @Inject constructor(
         viewModelScope.launch {
             updateUserPassword(
                 state.password,
+                ""
             ).onEach { result ->
                 Log.e("TAG", "onSubmit: $result")
                 when (result) {

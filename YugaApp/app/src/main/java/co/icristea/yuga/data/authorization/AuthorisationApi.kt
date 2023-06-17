@@ -27,4 +27,4 @@ interface AuthorisationApi {
     companion object {
         const val BASE_URL = "http://10.0.2.2:8080/"
     }
-}//"http://10.0.2.2:8080/user/" emmulators
+}//"http://10.0.2.2:8080/user/" emulators

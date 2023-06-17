@@ -26,10 +26,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,7 +50,6 @@ import co.icristea.yuga.R
 import co.icristea.yuga.core.util.AuthorisationEvent
 import co.icristea.yuga.ui.theme.Grey
 import co.icristea.yuga.ui.theme.Primary
-import kotlinx.coroutines.flow.collect
 
 @Composable
 fun VerificationCodeScreen(navController: NavController) {
