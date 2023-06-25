@@ -33,7 +33,7 @@ func NewService(
 	return &RestoreService{repository: repository, jwtCreator: jwtCreator, authRepository: authRepository, mailService: mailService, log: log}
 }
 
-func (s RestoreService) RestorePassword(ctx *gin.Context, dto model.RestorePasswordDTO) (model.RestorePasswordResponse, error) {
+func (s RestoreService) RestorePassword(ctx *gin.Context, dto model.RestorePasswordRequest) (model.RestorePasswordResponse, error) {
 
 	user, err := s.authRepository.FindOne(ctx, dto.Email)
 	if err != nil {
@@ -71,7 +71,7 @@ func (s RestoreService) RestorePassword(ctx *gin.Context, dto model.RestorePassw
 
 	return response, nil
 }
-func (s RestoreService) ValidateCode(ctx *gin.Context, code model.ValidateCodeDTO) (model.ValidateCodeResponse, error) {
+func (s RestoreService) ValidateCode(ctx *gin.Context, code model.ValidateCodeRequest) (model.ValidateCodeResponse, error) {
 	data, err := s.repository.ValidateCode(ctx, code)
 	if err != nil {
 		return model.ValidateCodeResponse{}, err
@@ -84,7 +84,7 @@ func (s RestoreService) ValidateCode(ctx *gin.Context, code model.ValidateCodeDT
 		Status: "SUCCESS",
 	}, nil
 }
-func (s RestoreService) UpdatePassword(ctx *gin.Context, updatePasswordDto model.UpdatePasswordDTO) (m.UserResponse, error) {
+func (s RestoreService) UpdatePassword(ctx *gin.Context, updatePasswordDto model.UpdatePasswordRequest) (m.UserResponse, error) {
 
 	updatedPassword, err := password.HashPassword(updatePasswordDto.Password)
 	if err != nil {

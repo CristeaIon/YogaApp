@@ -20,13 +20,13 @@ func NewRepository(client postgres.Client, log *logger.Logger) storage.AuthRepos
 	return &repository{client: client, log: log}
 }
 
-func (r *repository) Create(ctx context.Context, user model.User) (model.User, error) {
+func (r *repository) Create(ctx context.Context, user model.UserDAO) (model.UserDAO, error) {
 	query := `INSERT INTO users 
 				(full_name, email, phone, password_hash)
 			  VALUES ($1,$2,$3,$4)
 			  RETURNING id, full_name, email, phone, created_at, updated_at`
 
-	var u model.User
+	var u model.UserDAO
 
 	if err := r.client.QueryRow(ctx, query, user.FullName, user.Email, user.Phone, user.PasswordHash).Scan(&u.ID, &u.FullName, &u.Email, &u.Phone, &u.CreatedAt, &u.UpdatedAt); err != nil {
 		var pgErr *pgconn.PgError
@@ -34,14 +34,14 @@ func (r *repository) Create(ctx context.Context, user model.User) (model.User, e
 			pgErr = err.(*pgconn.PgError)
 			newErr := fmt.Errorf(fmt.Sprintf("SQL Error: %s, Detail: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState()))
 			r.log.Error(newErr)
-			return model.User{}, newErr
+			return model.UserDAO{}, newErr
 		}
-		return model.User{}, err
+		return model.UserDAO{}, err
 	}
 
 	return u, nil
 }
-func (r *repository) Update(ctx context.Context, user model.User) error {
+func (r *repository) Update(ctx context.Context, user model.UserDAO) error {
 	query := `
 INSERT INTO users 
 	(full_name, email, phone, password_hash)
@@ -61,28 +61,28 @@ RETURNING id
 
 	return nil
 }
-func (r *repository) FindOne(ctx context.Context, email string) (model.User, error) {
+func (r *repository) FindOne(ctx context.Context, email string) (model.UserDAO, error) {
 	query := `
 SELECT
     id, full_name, email, password_hash, phone, created_at, updated_at
 FROM users
 WHERE email = $1
 `
-	var user model.User
+	var user model.UserDAO
 	err := r.client.QueryRow(ctx, query, email).Scan(&user.ID, &user.FullName, &user.Email, &user.PasswordHash, &user.Phone, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		return user, err
 	}
 	return user, nil
 }
-func (r *repository) Delete(ctx context.Context, id string) (model.User, error) {
+func (r *repository) Delete(ctx context.Context, id string) (model.UserDAO, error) {
 	query :=
 		`
 DELETE FROM users
 WHERE id = $1
 RETURNING id, full_name, email, phone, created_at, updated_at;
 `
-	var user model.User
+	var user model.UserDAO
 	err := r.client.QueryRow(ctx, query, id).Scan(&user.ID, &user.FullName, &user.Email, &user.Phone, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		return user, err

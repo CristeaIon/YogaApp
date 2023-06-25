@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-type RestorePasswordDTO struct {
+type RestorePasswordRequest struct {
 	Email string `json:"email" binding:"required,email"`
 }
 
@@ -13,11 +13,11 @@ type RestorePasswordResponse struct {
 	SendTime   time.Time `json:"sendTime"`
 }
 
-type UpdatePasswordDTO struct {
+type UpdatePasswordRequest struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=6"`
 }
-type ValidateCodeDTO struct {
+type ValidateCodeRequest struct {
 	ID      string `json:"id"`
 	Contact string `json:"contact"`
 	Code    string `json:"code"`

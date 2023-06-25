@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-type User struct {
+type UserDAO struct {
 	ID           string    `json:"id"`
 	FullName     string    `json:"fullName"`
 	Email        string    `json:"email"`
@@ -11,14 +11,14 @@ type User struct {
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 }
-type CreateUserDTO struct {
+type CreateUserRequest struct {
 	FullName string `json:"fullName" binding:"required"`
 	Email    string `json:"email" binding:"required,email"`
 	Phone    string `json:"phone" binding:"required"`
 	Password string `json:"password" binding:"required,min=6"`
 }
 
-type LoginUserDTO struct {
+type LoginUserRequest struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=6"`
 }

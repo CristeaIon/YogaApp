@@ -38,7 +38,7 @@ RETURNING id,contact, send_status,send_time`
 	return resp, nil
 }
 
-func (r repository) ValidateCode(ctx context.Context, code model.ValidateCodeDTO) (model.ValidationData, error) {
+func (r repository) ValidateCode(ctx context.Context, code model.ValidateCodeRequest) (model.ValidationData, error) {
 	query := `SELECT id,contact,token, send_status, send_time FROM otp_code
 WHERE contact=$1 AND id=$2`
 
@@ -57,13 +57,13 @@ WHERE contact=$1 AND id=$2`
 	return resp, nil
 }
 
-func (r repository) UpdatePassword(ctx context.Context, email string, password string) (m.User, error) {
+func (r repository) UpdatePassword(ctx context.Context, email string, password string) (m.UserDAO, error) {
 	query := `UPDATE users
 SET password_hash = $1
 WHERE email = $2
 RETURNING id, full_name,email,phone,created_at,updated_at`
 
-	var u m.User
+	var u m.UserDAO
 
 	if err := r.client.QueryRow(ctx, query, password, email).Scan(&u.ID, &u.FullName, &u.Email, &u.Phone, &u.CreatedAt, &u.UpdatedAt); err != nil {
 		var pgErr *pgconn.PgError

@@ -21,7 +21,7 @@ func NewService(repository storage.AuthRepository, jwtCreator token.Creator, log
 	return &Service{repository: repository, jwtCreator: jwtCreator, log: log}
 }
 
-func (s Service) CreateUser(ctx *gin.Context, userDTO *model.CreateUserDTO) (model.UserResponse, error) {
+func (s Service) CreateUser(ctx *gin.Context, userDTO *model.CreateUserRequest) (model.UserResponse, error) {
 	newToken, err := s.jwtCreator.CreateToken(userDTO.FullName, userDTO.Email, 600*time.Second)
 
 	if err != nil {
@@ -43,7 +43,7 @@ func (s Service) CreateUser(ctx *gin.Context, userDTO *model.CreateUserDTO) (mod
 		s.log.Error(err)
 		return model.UserResponse{}, err
 	}
-	var newUser = model.User{
+	var newUser = model.UserDAO{
 		FullName:     userDTO.FullName,
 		Email:        userDTO.Email,
 		Phone:        userDTO.Phone,
@@ -70,7 +70,7 @@ func (s Service) CreateUser(ctx *gin.Context, userDTO *model.CreateUserDTO) (mod
 	return user, nil
 }
 
-func (s Service) LoginUser(ctx *gin.Context, userDTO *model.LoginUserDTO) (model.UserResponse, error) {
+func (s Service) LoginUser(ctx *gin.Context, userDTO *model.LoginUserRequest) (model.UserResponse, error) {
 	user, err := s.repository.FindOne(ctx, userDTO.Email)
 
 	if err != nil {
