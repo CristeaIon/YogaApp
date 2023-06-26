@@ -3,6 +3,7 @@ package restore
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"yuga_back/internal/apperror"
 	"yuga_back/internal/handlers"
 	"yuga_back/internal/restore/model"
 	restoreService "yuga_back/internal/restore/service"
@@ -49,17 +50,17 @@ func (h *handler) RestorePassword(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&restoreDTO)
 	if err != nil {
 		h.logger.Error(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, apperror.ErrValidation)
 		return
 	}
 	passwordResponse, err := h.service.RestorePassword(ctx, restoreDTO)
 	if err != nil {
 		if isNotFoundError(err) {
 			h.logger.Error(err)
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			ctx.JSON(http.StatusNotFound, apperror.ErrNotFound)
 		}
 		h.logger.Error(err)
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrInternalSystem)
 		return
 	}
 	ctx.IndentedJSON(http.StatusOK, passwordResponse)
@@ -84,17 +85,17 @@ func (h *handler) ValidateCode(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&code)
 	if err != nil {
 		h.logger.Error(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, apperror.ErrValidation)
 		return
 	}
 	validationResponse, err := h.service.ValidateCode(ctx, code)
 	if err != nil {
 		if isNotFoundError(err) {
 			h.logger.Error(err)
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			ctx.JSON(http.StatusNotFound, apperror.ErrNotFound)
 		}
 		h.logger.Error(err)
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrInternalSystem)
 		return
 	}
 	ctx.IndentedJSON(http.StatusOK, validationResponse)
@@ -119,17 +120,17 @@ func (h *handler) UpdatePassword(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&passwordDTO)
 	if err != nil {
 		h.logger.Error(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, apperror.ErrValidation)
 		return
 	}
 	response, err := h.service.UpdatePassword(ctx, passwordDTO)
 	if err != nil {
 		if isNotFoundError(err) {
 			h.logger.Error(err)
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			ctx.JSON(http.StatusNotFound, apperror.ErrNotFound)
 		}
 		h.logger.Error(err)
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrInternalSystem)
 		return
 	}
 	ctx.IndentedJSON(http.StatusOK, response)

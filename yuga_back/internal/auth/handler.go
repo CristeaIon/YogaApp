@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"github.com/lib/pq"
 	"net/http"
 	"yuga_back/internal/apperror"
@@ -51,7 +50,7 @@ func (h *handler) CreateUser(ctx *gin.Context) {
 	var newUser model.CreateUserRequest
 	h.logger.Info("create new user")
 	if err := ctx.ShouldBindJSON(&newUser); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, apperror.ErrValidation)
 		return
 	}
 
@@ -62,7 +61,7 @@ func (h *handler) CreateUser(ctx *gin.Context) {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
 			case "foreign_key_violation", "unique_violation":
-				ctx.IndentedJSON(http.StatusForbidden, errorResponse(err))
+				ctx.IndentedJSON(http.StatusForbidden, apperror.ErrForbidden)
 				return
 			}
 		}
@@ -90,7 +89,7 @@ func (h *handler) LoginUser(ctx *gin.Context) {
 	h.logger.Info("login user")
 
 	if err := ctx.ShouldBindJSON(&newUser); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, apperror.ErrValidation)
 		return
 	}
 	user, err := h.service.LoginUser(ctx, &newUser)
@@ -98,16 +97,16 @@ func (h *handler) LoginUser(ctx *gin.Context) {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
 			case "unique_violation", "no_data_found":
-				ctx.JSON(http.StatusForbidden, errorResponse(err))
+				ctx.JSON(http.StatusForbidden, apperror.ErrForbidden)
 				return
 			}
 		}
 		if isNotFoundError(err) {
-			ctx.JSON(http.StatusNotFound, errorResponse(errors.New("user not found")))
+			ctx.JSON(http.StatusNotFound, apperror.ErrNotFound)
 			return
 		}
 
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrInternalSystem)
 		return
 	}
 
@@ -132,17 +131,17 @@ func (h *handler) DeleteUser(ctx *gin.Context) {
 	h.logger.Info("delete users")
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		h.logger.Error(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, apperror.ErrValidation)
 		return
 	}
 	user, err := h.service.DeleteUser(ctx, req.ID)
 	if err != nil {
 		h.logger.Error(err)
 		if isNotFoundError(err) {
-			ctx.JSON(http.StatusNotFound, errorResponse(errors.New("user not found")))
+			ctx.JSON(http.StatusNotFound, apperror.ErrNotFound)
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrInternalSystem)
 		return
 	}
 	ctx.IndentedJSON(http.StatusOK, user)

@@ -9,6 +9,11 @@ const name = "YA"
 
 var (
 	ErrInternalSystem = NewAppError(http.StatusInternalServerError, "00100", "internal system error")
+	ErrBadRequest     = NewAppError(http.StatusBadRequest, "00101", "bad request")
+	ErrValidation     = NewAppError(http.StatusBadRequest, "00102", "validation error")
+	ErrNotFound       = NewAppError(http.StatusNotFound, "00103", " not found")
+	ErrUnauthorized   = NewAppError(http.StatusUnauthorized, "00104", "unauthorized")
+	ErrForbidden      = NewAppError(http.StatusForbidden, "00105", " access forbidden")
 )
 
 type AppError struct {
