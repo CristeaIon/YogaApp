@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -47,6 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import co.icristea.yuga.R
+import co.icristea.yuga.core.navigation.Screen
 import co.icristea.yuga.core.util.AuthorisationEvent
 import co.icristea.yuga.ui.theme.Grey
 import co.icristea.yuga.ui.theme.Primary
@@ -56,12 +58,15 @@ fun VerificationCodeScreen(navController: NavController) {
 
     val validateCodeViewModel = hiltViewModel<ValidationCodeViewModel>()
     val state = validateCodeViewModel.state
+
     val context = LocalContext.current
 
     LaunchedEffect(key1 = context) {
         validateCodeViewModel.validationEvents.collect { result ->
             when (result) {
-                is AuthorisationEvent.Success -> {}
+                is AuthorisationEvent.Success -> {
+                    navController.navigate(Screen.NewPassword.route)
+                }
                 is AuthorisationEvent.Error -> {}
             }
         }
@@ -90,7 +95,7 @@ fun VerificationCodeScreen(navController: NavController) {
             modifier = Modifier.width(120.dp),
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
         )
-        Spacer(modifier = Modifier.height(86.dp))
+        Spacer(modifier = Modifier.fillMaxHeight(.2f))
 
         Text(
             text = "Verification Code",
@@ -114,6 +119,9 @@ fun VerificationCodeScreen(navController: NavController) {
             onValueChange = {
                 if (it.length <= 4) {
                     validateCodeViewModel.onEvent(ValidationFormEvent.CodeChanged(it))
+                }
+                if (it.length == 4) {
+                    validateCodeViewModel.onEvent(ValidationFormEvent.SubmitCode)
                 }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),

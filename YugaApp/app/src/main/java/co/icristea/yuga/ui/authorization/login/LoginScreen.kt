@@ -133,7 +133,7 @@ fun LoginScreen(navController: NavController) {
                     Text(text = state.emailError ?: "", fontSize = 10.sp, color = Color.Red)
                 }
             )
-            Spacer(modifier = Modifier.fillMaxHeight(.02f))
+            Spacer(modifier = Modifier.fillMaxHeight(.1f))
             AuthorizationTextField(
                 value = state.password,
                 visualTransformation = PasswordVisualTransformation(),
@@ -158,7 +158,7 @@ fun LoginScreen(navController: NavController) {
                     Text(text = state.passwordError ?: "", fontSize = 10.sp, color = Color.Red)
                 }
             )
-            Spacer(modifier = Modifier.fillMaxHeight(.02f))
+            Spacer(modifier = Modifier.fillMaxHeight(.1f))
             AuthorisationButton(
                 title = "Login",
                 textColor = MaterialTheme.colorScheme.onPrimary,
@@ -179,7 +179,7 @@ fun LoginScreen(navController: NavController) {
                 Text(
                     text = "Don't have an account?",
                     fontSize = 17.sp,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.tertiary
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 ClickableText(

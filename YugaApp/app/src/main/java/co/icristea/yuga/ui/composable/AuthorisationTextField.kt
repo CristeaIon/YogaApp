@@ -23,7 +23,7 @@ fun AuthorizationTextField(
     value: String,
     textColor: Color? = Color.Black,
     label: @Composable() (() -> Unit)? = null,
-    visualTransformation: VisualTransformation? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     onChange: (String) -> Unit,
     isError: Boolean,
     placeholder: @Composable() (() -> Unit)? = null,
@@ -35,7 +35,7 @@ fun AuthorizationTextField(
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         value = value,
-        visualTransformation = PasswordVisualTransformation(),
+        visualTransformation = visualTransformation,
         onValueChange = onChange,
         label = label,
         leadingIcon = {},

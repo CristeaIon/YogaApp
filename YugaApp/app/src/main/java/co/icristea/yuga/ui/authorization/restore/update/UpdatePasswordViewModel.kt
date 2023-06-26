@@ -11,8 +11,10 @@ import co.icristea.yuga.core.util.AuthorisationEvent
 import co.icristea.yuga.core.util.Response
 import co.icristea.yuga.domain.authorization.use_case.UpdateUserPassword
 import co.icristea.yuga.domain.authorization.use_case.ValidateRepeatedPassword
+import co.icristea.yuga.domain.storage.IStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -24,6 +26,7 @@ import javax.inject.Inject
 class UpdatePasswordViewModel @Inject constructor(
     private val updateUserPassword: UpdateUserPassword,
     private val validateRepeatedPassword: ValidateRepeatedPassword,
+    private val store: IStorage,
 ) : ViewModel() {
 
     var state by mutableStateOf(UpdatePasswordFormState())
@@ -55,7 +58,6 @@ class UpdatePasswordViewModel @Inject constructor(
                         repeatedPasswordError = passwordCheck.errorMessage
                     )
                     return
-
                 }
                 onSubmit()
             }
@@ -65,24 +67,26 @@ class UpdatePasswordViewModel @Inject constructor(
     private fun onSubmit() {
         Log.e("TAG", "onSubmit:clicked ")
         viewModelScope.launch {
-            updateUserPassword(
-                state.password,
-                ""
-            ).onEach { result ->
-                Log.e("TAG", "onSubmit: $result")
-                when (result) {
+            store.getRestorePasswordResponse().collect {
+                updateUserPassword(
+                    state.password,
+                    it.contact,
+                ).onEach { result ->
+                    Log.e("TAG", "onSubmit: $result")
+                    when (result) {
 
-                    is Response.Success -> {
-                        Log.e("TAG", "onSuccessSubmit: ${result.data}")
-                        validateEventChannel.send(AuthorisationEvent.Success)
-                    }
+                        is Response.Success -> {
+                            Log.e("TAG", "onSuccessSubmit: ${result.data}")
+                            validateEventChannel.send(AuthorisationEvent.Success)
+                        }
 
-                    is Response.Error -> {
-                        Log.e("TAG", "onErrorSubmit: ${result.message}")
-                        validateEventChannel.send(AuthorisationEvent.Error(result.message.toString()))
+                        is Response.Error -> {
+                            Log.e("TAG", "onErrorSubmit: ${result.message}")
+                            validateEventChannel.send(AuthorisationEvent.Error(result.message.toString()))
+                        }
                     }
-                }
-            }.launchIn(this)
+                }.launchIn(this)
+            }
         }
     }
 }

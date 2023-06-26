@@ -10,6 +10,7 @@ import co.icristea.yuga.core.util.AuthorisationEvent
 import co.icristea.yuga.core.util.Response
 import co.icristea.yuga.domain.authorization.use_case.RestoreUserPassword
 import co.icristea.yuga.domain.authorization.use_case.ValidateEmail
+import co.icristea.yuga.domain.storage.IStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class RestorePasswordViewModel @Inject constructor(
     private val restoreUserPassword: RestoreUserPassword,
     private val validateEmail: ValidateEmail,
+    private val storage: IStorage,
 ) : ViewModel() {
 
     var state by mutableStateOf(RestoreFormState())
@@ -45,7 +47,7 @@ class RestorePasswordViewModel @Inject constructor(
                 ).any { !it.successful }
 
                 if (hasError) {
-                  state = state.copy(
+                    state = state.copy(
                         emailError = emailResult.errorMessage,
                     )
                     return
@@ -66,6 +68,10 @@ class RestorePasswordViewModel @Inject constructor(
 
                     is Response.Success -> {
                         Log.e("TAG", "onSuccessSubmit: ${result.data}")
+                        storage.saveRestorePasswordResponse(
+                            id = result.data?.id ?: "",
+                            contact = result.data?.contact ?: ""
+                        )
                         validateEventChannel.send(AuthorisationEvent.Success)
                     }
 

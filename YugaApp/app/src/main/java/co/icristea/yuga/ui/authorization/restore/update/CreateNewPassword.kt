@@ -173,7 +173,7 @@ fun CreateNewPasswordScreen(navController: NavController) {
                 textColor = MaterialTheme.colorScheme.onPrimary,
                 backgroundColor = MaterialTheme.colorScheme.primary
             ) {
-                navController.navigate(Screen.VerificationCode.route)
+                updatePasswordViewModel.onEvent(UpdatePasswordFormEvent.Submit)
             }
         }
     }
